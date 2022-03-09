@@ -24,7 +24,7 @@ def addData(data, series, name):
 st.title("Project Status Report")
 st.header(
     "Choose the project status file...")
-st.text("Export from QP with ID, Status, Owner, Deadline")
+st.text("Project status file with ID, Status, Owner for each issue")
 file = st.file_uploader("")
 if file is not None:
     ext = file.name.split(".")[1]
@@ -37,19 +37,26 @@ if file is not None:
     else:
         st.error("Please choose a 'csv' or 'xlsx' or 'xls' file type")
     if data is not None:
-        data = data.drop(columns=['Deadline'])
+
+        # drop deadline data
+        if 'Deadline' in data.columns:
+            data = data.drop(columns=['Deadline'])
+
+        # drop all the rows with ID is NULL
         data = data.dropna(subset=['ID'], how='all')
 
+        # calculate total statuses
         stats = data['Status'].unique()
         stats_table = addData(data, stats, ['Status'])
-        st.subheader("Outstanding items total:")
+        st.subheader("Issue status:")
         st.table(stats_table)
         stat_fig = px.bar(stats_table, x='Status', y='Counts')
         st.plotly_chart(stat_fig, use_container_width=True)
 
+        # caclculate per owener data
         people = data['Owner'].unique()
         people_table = addData(data, people, ['Owner', 'Status'])
-        st.subheader("Outstanding items per preson:")
+        st.subheader("Status per owner:")
         st.table(people_table)
         people_fig = px.bar(people_table, x='Owner',
                             y='Counts', color="Status", barmode='stack')
