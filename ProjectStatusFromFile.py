@@ -42,12 +42,14 @@ if file is not None:
 
         stats = data['Status'].unique()
         stats_table = addData(data, stats, ['Status'])
+        st.subheader("Outstanding items total:")
         st.table(stats_table)
         stat_fig = px.bar(stats_table, x='Status', y='Counts')
         st.plotly_chart(stat_fig, use_container_width=True)
 
         people = data['Owner'].unique()
         people_table = addData(data, people, ['Owner', 'Status'])
+        st.subheader("Outstanding items per preson:")
         st.table(people_table)
         people_fig = px.bar(people_table, x='Owner',
                             y='Counts', color="Status", barmode='stack')
